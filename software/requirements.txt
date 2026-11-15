@@ -1,0 +1,3 @@
+# Necessário só para ler a porta serial ao vivo (capsula.receber --porta).
+# Simulador, arquivos gravados e testes usam apenas a biblioteca padrão.
+pyserial>=3.5

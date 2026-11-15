@@ -1,0 +1,40 @@
+# --- LaTeX (artefatos de compilação) ---
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.lox
+*.out
+*.run.xml
+*.synctex.gz
+*.synctex(busy)
+*.toc
+*-eps-converted-to.pdf
+monografia/*.pdf
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# --- Saídas do software de PC ---
+software/capturas*/
+*.bin
+
+# --- Arduino / PlatformIO ---
+build/
+.pio/
+
+# --- Editores e sistema ---
+.vscode/
+.idea/
+*.lnk
+Thumbs.db
+desktop.ini
+.DS_Store
