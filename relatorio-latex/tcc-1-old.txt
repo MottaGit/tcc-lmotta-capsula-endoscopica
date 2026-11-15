@@ -1,0 +1,442 @@
+% !TEX program = pdflatex
+% !TEX ext =  --interaction=nonstopmode --enable-etex --enable-write18
+% !BIB program = biber
+%%%==============================================================================
+%% Copyright 2022-23 by Alceu Frigeri
+%%
+%% Document (sample) file using the class ufrgscca
+%%
+%% This file was adapted from:
+%% Meta-monografia de exemplo genérico de uso da classe delaetex.cls
+%% Copyright (C) 2004..2016 Walter Fetter Lages <fetter@ece.ufrgs.br>
+%%
+%%%==============================================================================
+%\documentclass[repeatfields,openright,overleaf,nomicrotype]{ufrgscca}
+\documentclass[repeatfields,xlists,xpacks,oneside]{ufrgscca}
+
+\addbibresource{modeloTCC.bib}
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% TCC Class options
+%%
+%% english   => paper/report in english
+%%     \documentclass[english]{tcc}
+%%
+%% repeatfields => (abnt) references with same authors have their names repeated.
+%%												otherwise only the first reference of them will be printed.
+%%     \documentclass[repeatfields]{tcc}
+%%
+%% openright => force the start of a chapter at odd pages.
+%%     \documentclass[openright]{tcc}
+%%
+%% oneside => single side document
+%%     \documentclass[oneside]{tcc}
+%%
+%% NOTE : openright, oneside :: IF you are going to print the doc, single sided, the best is to just use
+%%                              the [oneside] option.
+%%                              IF you are going to print the doc, double sided, the best is to just use the
+%%                              the [openright] option.
+%%
+%% relnum => figures/tables counters are reset with each chapter.
+%%     \documentclass[relnum]{tcc}
+%%
+%% showframe => (for drafts only) auxiliary visual guide to page frame.
+%%     \documentclass[showframe]{tcc}
+%%
+%% showlabels =>  (for drafts only) prints labes/citeref strings on the side bar.
+%%     \documentclass[showlabels]{tcc}
+%%
+%%
+%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% inicio do documento
+%
+
+\begin{document}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% \MakeCoverPages produz as páginas iniciais
+%% as opções são
+%%
+%% tccI => para TCC-I
+%% tccII => para TCC-II
+%% internship => para Estágio Obrigatório
+%% internship-opt => para Estágio Não Obrigatório
+%% class-report => para relatórios/trabalhos de uma disciplina
+%%
+%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%
+
+%\MakeCoverPages{tccI}
+\MakeCoverPages{tccI}
+
+% palavras-chave
+% iniciar todas com letras minúsculas, exceto no caso de abreviaturas
+%
+\mainkeywords{Transferência de energia sem fio}
+\mainkeywords{Cápsula de endoscopia}
+\mainkeywords{Transmissão de dados}
+\mainkeywords{Validação de sistemas}
+
+
+% resumo no idioma do documento
+\begin{mainabstract}
+
+Este trabalho tem como objetivo validar conceitualmente os sistemas que compõem uma cápsula endoscópica sem fio, focando na integração e otimização das tecnologias de transmissão de energia sem fio (WPT) e coleta e transmissão de dados. A endoscopia por cápsula sem fio surgiu como uma alternativa menos invasiva e mais confortável em comparação aos métodos tradicionais de endoscopia, sendo particularmente útil para a análise do intestino delgado, uma área que os métodos convencionais não são capazes de examinar. No entanto, as limitações impostas pelo tamanho das cápsulas consistem em um desafio significativo. Este trabalho propõe a utilização de WPT baseada em acoplamento indutivo para alimentar a cápsula, superando as limitações das baterias convencionais. O projeto consiste na aplicação de tecnologias disponíveis na implementação visando a validação prática dos subsistemas da cápsula, que será realizada, em escala adequada, em uma segunda etapa do projeto e irá incluir a análise do desempenho do sistema WPT, a verificação da eficiência na transmissão de dados, e a qualidade das imagens capturadas.
+
+\end{mainabstract}
+
+% resumo no outro idioma
+% como parametro devem ser passadas as palavras-chave
+% no outro idioma, separadas por vírgulas
+
+%%
+%% No caso do documento ser em ingles, usar
+%%  \begin{otherabstract}[brazilian]
+%%
+\begin{otherabstract}
+
+\otherkeywords{Wireless Power Transfer}
+\otherkeywords{Endoscopic Capsule}
+\otherkeywords{Data Transmission}
+\otherkeywords{System Validation}
+
+This work aims to conceptually validate the systems that make up a wireless endoscopic capsule, focusing on the integration and optimization of wireless power transmission (WPT) technologies and data collection and transmission. Wireless capsule endoscopy has emerged as a less invasive and more comfortable alternative compared to traditional endoscopy methods, being particularly useful for examining the small intestine, an area that conventional methods are unable to reach. However, the limitations imposed by the size of the capsules present a significant challenge. This work proposes the use of WPT based on inductive coupling to power the capsule, overcoming the limitations of conventional batteries. The project involves applying available technologies with the goal of practical validation of the capsule’s subsystems, which will be carried out, at an appropriate scale, in a subsequent phase of the project. This phase will include performance analysis of the WPT system, verification of data transmission efficiency, and the quality of captured images.
+
+\end{otherabstract}
+
+
+% sumario
+\setcounter{tocdepth}{3}
+
+% lista de ilustrações
+\listoffigures
+
+% lista de tabelas
+\listoftables
+
+% lista de listagens (código fonte)
+%\listofcodelist %% doesn't work on overleaf
+
+% lista de abreviaturas e siglas
+% o parametro deve ser a abreviatura mais longa
+\begin{listofabbrv}{PPGEE}
+	\item[WCE] Wireless Capsule Endoscopy (Endoscopia por Cápsula Sem Fio)
+	\item[WPT] Wireless Power Transfer (Transmissão de Energia Sem Fio)
+	\item[RC] Receiving Coil (Bobina de Recepção)
+	\item[CMOS] Complementary Metal-Oxide-Semiconductor (Semicondutor de Óxido Metálico Complementar)
+	\item[RF] Radio Frequency (Frequência de Rádio)
+	\item[IMU] Inertial Measurement Unit (Unidade de Medição Inercial)
+\end{listofabbrv}
+
+% lista de símbolos é opcional
+%\begin{listofsymbols}{$\alpha\beta\pi\omega$}
+%       \item[$\sum$] Somatório
+%       \item[$\alpha\beta\pi\omega$] Fator de inconstância do resultado
+%\end{listofsymbols}
+
+
+\tableofcontents
+
+
+% AQUI COMEÇA O TEXTO PROPRIAMENTE DITO
+
+% introducao
+\chapter{Introdução}
+
+A endoscopia por cápsula sem fio (WCE) tem recebido muita atenção como uma alternativa útil à endoscopia tradicional, na qual o método de diagnóstico comum para lesões gástricas envolve a passagem de um tubo longo e flexível equipado com uma câmera de vídeo pela garganta do paciente. Além disso, a endoscopia tradicional é realizada sob sedação pode causar eventos adversos em pacientes de alto risco \cite{amornyotin2013sedation}, como aqueles com doenças cardíacas e pulmonares graves ou pacientes idosos.
+
+A WCE tornou-se um dispositivo de diagnóstico preferido para doenças do trato gastrointestinal desde sua invenção devido às suas características não invasivas e indolores \cite{iddan2000wireless}, especificamente para a mucosa do intestino delgado \cite{pennazio2004outcome}, que não podia ser alcançada por endoscópios convencionais \cite{pennazio2004outcome}. Ao engolir uma cápsula do tamanho de um comprimido, anormalidades gástricas como pólipos, úlceras, sangramento e infecções podem ser detectadas e diagnosticadas através da transmissão de vídeo sem fio \cite{khan2020computer}.
+
+Para melhorar a qualidade do diagnóstico, várias especificações importantes da WCE, como resolução de imagem, taxa de quadros e tempo de operação, precisam de melhorias, o que consumirá mais energia \cite{basar2014application}. No futuro, as cápsulas não se limitarão apenas à detecção de imagens, mas também envolverão múltiplas tarefas (por exemplo, biópsia, liberação de medicamentos e movimentos autônomos) \cite{meng2021novel}. Essas funções adicionais aumentarão o consumo de energia, que a bateria convencional não consegue satisfazer. Consequentemente, o fornecimento de energia para WCEs tem sido uma questão desafiadora, pois a cápsula é muito pequena para transportar uma bateria de grande capacidade e um fio de alimentação pode causar desconforto aos pacientes ou restringir o movimento da cápsula \cite{gao2022stable}. Nesse contexto a transmissão de energia sem fio (WPT) baseada em acoplamento indutivo é uma solução promissora para resolver a questão energética dos WCEs.
+
+O design dos sistemas que compõem a WCE envolve a integração de várias tecnologias para garantir a operação eficiente e a coleta precisa de dados. O sistema de WPT permite que a cápsula receba energia de uma bobina transmissora, independentemente de sua orientação no trato gastrointestinal, utilizando acoplamento indutivo \cite{kim2021capsule}. A cápsula em si é equipada com um conjunto de bobinas receptoras, uma unidade de medição inercial (IMU) para determinar sua orientação, e componentes eletrônicos como câmeras, baterias e LEDs \cite{zhang2024transmitter}. Esses elementos trabalham em conjunto para fornecer energia e coletar dados de imagem, transmitindo informações em tempo real para fora do corpo.
+
+Este trabalho é uma extensão do estudo apresentado em \textcite{murliky2021study}, que desenvolveu um método otimizado de controle de transmissão de energia sem fio para procedimentos de endoscopia. O estudo anterior focou na compensação dinâmica de um link indutivo para garantir energia suficiente para alimentar os sistemas de uma WCE e incluiu um estudo de caso com um protótipo de cápsula contendo apenas o sistema de recepção de energia. O presente estudo foca na validação conceitual dos sistemas que compõem a cápsula, abrangendo os sistemas de processamento embarcado, transmissão de dados, captura de imagem e dados de posição. As análises são baseadas em testes de funcionalidade, simulações e estudos teóricos, com a expectativa de fornecer uma base sólida para futuros desenvolvimentos e aperfeiçoamentos na tecnologia de WCE. O objetivo deste projeto é validar os sistemas que compõem a cápsula endoscópica e desenvolver o projeto de forma modularizada para permitir a validação individual dos subsistemas e facilitar uma futura miniaturização e confecção de um protótipo em escala real, bem como buscar um equilíbrio entre o consumo de energia e restrições impostas pela aplicação.
+
+%\subsection{Objetivos Específicos}
+
+%\begin{enumerate}[tcc,alpha)]
+%\item Validar os subsistemas da cápsula endoscópica por meio de testes práticos e análises para assegurar seu funcionamento adequado e integração eficiente.
+%\item Projetar o sistema de forma modularizada, permitindo a validação independente dos subsistemas, incluindo recepção de energia sem fio, captura de dados de imagem, processamento de dados e transmissão.
+%\item Validar o subsistema de recepção de energia sem fio, que engloba a retificação e os reguladores de tensão, garantindo que a cápsula receba energia de forma eficiente e estável.
+%\item Realizar testes de desempenho para os sistemas de captura de dados de imagem, processamento de dados e transmissão, assegurando a qualidade das imagens, a eficácia do processamento e a integridade da transmissão de dados.
+%\end{enumerate}
+
+%%%%%%%%%%%%%%% REVISAO BIBLIOGRAFICA %%%%%%%%%%%%%%%
+
+% Revisão bibliográfica (2 paginas)
+\chapter{Revisão bibliográfica}
+%estado da arte do problema/solução apresentada na literatura (2 paginas)
+Este capítulo oferece uma revisão sobre a tecnologia de cápsulas endoscópicas, destacando as principais inovações em desenvolvimento, desafios e soluções encontradas na literatura científica. Serão abordados alguns aspectos sobre as tecnologias de transmissão de energia sem fio, e os sistemas que engloba a captura e transmissão de dados, além dos desafios e limitações atuais.
+
+\section{Cápsulas Endoscópicas}
+
+O mercado de WCE despertou o interesse entre várias indústrias e grupos de pesquisa universitária para avançar a tecnologia. O primeiro sistema WCE comercial, PillCam, foi desenvolvido pela Given Imaging no ano 2000 \cite{Pillcam}. Foi aprovado pela \textit{Food and Drug Administration} (FDA), agência do Departamento de Saúde e Serviços Humanos dos Estados Unidos, em 2001. Para a detecção de danos ou doenças no esôfago, intestino delgado e cólon. Atualmente, é o modelo comercial com mais adesão.
+
+Na literatura, diversos trabalhos relatam protótipos de cápsulas endoscópicas baseados em FPGA (\textit{Field-Programmable Gate Arrays}). Em \textcite{cavallotti2011fpga}, é descrito um sistema de desenvolvimento que utiliza essa tecnologia para testar a eletrônica da cápsula, empregando compressão DCT e armazenamento em SRAM externa. Em \textcite{covi2010miniaturized}, um dispositivo de endoscopia com fio, que integra um sensor CMOS comercial a uma placa programável, foi testado em experimentos ex-vivo e in-vivo em um modelo suíno. Em \textcite{meng2021novel}, um outro protótipo, equipado com seis câmeras, FPGA e memória flash, armazena os dados de imagem internamente, embora isso torne a recuperação dos dados menos prática.
+
+Existem diversos trabalhos baseados em microcontroladores comerciais e componentes prontos para uso. O trabalho em \textcite{gao2022stable} descreve um protótipo básico que integra uma câmera de vídeo analógica CMOS, um circuito modulador de RF e um sistema de iluminação com quatro LEDs brancos. Em \textcite{khan2020computer}, é apresentado um sistema de endoscopia sem fio desenvolvido com tecnologia Linux embarcada e microprocessadores ARM, utilizando um sensor de imagem CCD digital (MT9D111) para captura de imagens e um compressor de imagem (ADV202) para compressão JPEG2000. Já em \textcite{cheng2010novel}, um protótipo de cápsula é descrito com componentes comerciais, incluindo um sensor de imagem CMOS com sistema de compressão JPEG integrado, um microcontrolador ARM Cortex-M3 de 32 bits e um módulo transceptor RF.
+
+As referências citadas indicam que alguns desses protótipos fazem uso de baterias, o que é desvantajoso do ponto de vista de autonomia energética. Os modelos que utilizam energia sem fio não implementam um design de bobinas em quadratura, que poderia ser uma solução para maximização de potência. Todos os modelos suportam apenas captura de imagem por luz branca (WBI). A Figura \ref{fig:exemplos-capsulas} ilustra exemplos de algumas cápsulas citadas anteriormente. Há, portanto, uma necessidade de pesquisas que projetem um protótipo flexível em design para que vários algoritmos de imagem possam ser testados, desenvolvendo um protótipo de cápsula modular, programável e miniaturizável.
+
+\begin{figure}[htbp]
+  \centering
+  \caption{Exemplos de cápsulas endoscópicas existentes incluem: (a) um protótipo desenvolvido em um estudo utilizando FPGA e bateria não recarregável; (b) um protótipo de WCE com bateria recarregável; e (c) o modelo comercial PillCam ESO 2.}
+  \includegraphics[width=0.6\textwidth]{images/exemplos-capsulas.png}\\
+  \label{fig:exemplos-capsulas}
+  \sourcecitation{Elaborada pelo autor a partir de \cite{khan2013capsule}, \cite{zhang2024transmitter} e \cite{Pillcam}.}
+\end{figure}
+
+\section{Desafios e Limitações Atuais}
+Apesar dos avanços significativos, ainda existem desafios notáveis. A demanda energética para a WCE continua sendo um obstáculo, aumentando com a qualidade da imagem e recursos avançados incorporados. A cápsula mais básica requer cerca de 30 mW de energia para alimentar um sensor de imagem CMOS, LEDs e transceptor RF \cite{xie2006micro}. Cápsulas de vídeo de alta resolução (HRVCs) utilizam dispositivos de imagem de maior resolução, maior intensidade de luz e maior largura de banda de transmissão RF, exigindo até 200 mW \cite{pan2011video}. A próxima geração, conhecida como cápsulas robóticas (RCEs), incluirá sistemas avançados de controle, locomoção, foco automático, compressão de imagem e outros sensores, demandando até 400 mW \cite{carta2010wireless}. Cápsulas multifuncionais (MMR) podem exigir até 570 mW \cite{ye2008development}. A capacidade das baterias atuais é insuficiente, portanto, sistemas de WPT são necessários para atender a essa demanda com eficiência, estabilidade, segurança e portabilidade A Figura \ref{fig:power-requirement-wce} ilustra o consumo energético para diferentes modelos de cápsulas.
+
+\begin{figure}[htbp]
+  \centering
+  \caption{Requisito de energia para diferentes modelos de WCE.}
+  \includegraphics[width=0.5\textwidth]{images/power-requirement-wce.png}\\
+  \label{fig:power-requirement-wce}
+  \sourcecitation{\cite{basar2014application}}
+\end{figure}
+
+
+%%%%%%%%%%%%%%% FUNDAMENTAÇÂO TEORICA %%%%%%%%%%%%%%%
+
+% embasamento téorico para o desenvolvimento da solução proposta (4 paginas)
+\chapter{Fundamentação teórica}
+
+Este capítulo apresenta uma análise detalhada dos principais componentes e tecnologias envolvidas na construção de uma cápsula endoscópica sem fio. Serão abordados aspectos como a estrutura e os materiais utilizados, o design da câmera e dos sistemas ópticos, a iluminação por LEDs, os sistemas de transmissão de dados, os sensores inerciais, o sistema de controle e processamento de dados.
+
+\section{Transmissão de Energia Sem Fio}
+\label{sec:energia_sem_fio}
+
+O sistema de WPT envia energia elétrica entre um transmissor e um receptor usando ondas eletromagnéticas. Existem duas principais técnicas: radiativa, para campos distantes, e indutiva, para campos próximos \cite{rasouli2010energy}. A técnica de acoplamento indutivo é ideal para aplicações médicas, como a WCE \cite{xue2012high}.
+
+O acoplamento indutivo, também chamado de acoplamento magnético, é baseado em um campo magnético induzido que transfere energia elétrica entre duas bobinas.  \textcite{valtchev2009resonant} demonstram que essa técnica utiliza diretamente a Lei da Indução de Faraday-Lenz. De acordo com essa lei, quando uma corrente alternada percorre uma bobina transmissora, um campo magnético alternado é gerado ao seu redor. Quando uma bobina receptora é posicionada dentro desse campo magnético, uma corrente é induzida na bobina receptora. A Figura \ref{fig:indutivofull} mostra o modelo dessa técnica de transmissão, onde uma fonte elétrica alternada sobre uma bobina transmissora induz uma tensão na bobina receptora através da indutância mútua entre as bobinas.
+
+\begin{figure}[htbp]
+  \centering
+  \caption{Transferência de energia sem fios por acoplamento indutivo formado por uma fonte elétrica alternada e uma resistência interligadas através do acoplamento magnético de duas bobinas.}
+  \includegraphics[width=0.6\textwidth]{images/indutivofull.png}\\
+  \label{fig:indutivofull}
+  \sourcecitation{\cite{motta2016transmissao}}
+\end{figure}
+
+A eficiência da transferência de energia é maximizada quando as bobinas estão alinhadas e a distância entre elas é minimizada. Além disso, a ressonância pode ser utilizada para aumentar a eficiência, ajustando a frequência de operação das bobinas para a frequência ressonante natural do sistema \cite{motta2016transmissao}. Para esse ajuste, um circuito de compensação capacitiva é acoplado ao sistema, otimizando a ressonância e, consequentemente, a transferência de energia.
+
+Pesquisas recentes focam na maximização da potência em sistemas de transmissão de energia utilizando acoplamento indutivo ressonante. \textcite{murliky2017multivariable} propõem um método que implementa um circuito de compensação adaptativos que ajusta dinamicamente a frequência e a impedância do sistema de acoplamento ressonante. Os resultados mostram que a potência entregue à carga se mantém praticamente constante dentro de uma faixa de variação do acoplamento magnético, mesmo em cenários com variações na distância e no alinhamento entre as bobinas transmissora e receptora.
+
+\section{Receptor de Energia Sem Fio}
+O subsistema de recepção de energia consiste em uma bobina receptora (RC) enrolada em torno de um núcleo de ferrite, acompanhada de um circuito retificador e um regulador. Quando um campo magnético variável no tempo é perpendicular à área de secção transversal da bobina receptora, uma corrente alternada (CA) é induzida, gerando uma tensão CA nos terminais da bobina. O circuito retificador converte a fonte CA em uma fonte de corrente contínua (CC), e o regulador estabiliza o nível de CC para que possa alimentar os circuitos da WCE. São propostas duas alternativas para a transmissão de energia sem fio: na primeira, a energia transmitida carrega uma bateria que alimenta o sistema, enquanto na segunda, a cápsula é alimentada diretamente pela energia transmitida, eliminando a necessidade de uma bateria.
+
+\subsection{Dimensões da Bobina Receptora}
+
+As dimensões da bobina receptora determinam a tensão induzida na RC. Uma área de secção transversal maior resulta em uma tensão mais alta. No entanto, as cápsulas endoscópicas utilizadas no intestino delgado geralmente têm cerca de 11 mm de diâmetro e 26 mm de comprimento, impondo limitações de tamanho na RC \cite{basar2014application}. Para simplificar a integração do subsistema de recepção sem exigir mudanças significativas na arquitetura das cápsulas existentes, o diâmetro da bobina receptora (RC) deve ser compatível com o diâmetro máximo padrão para cápsulas endoscópicas, que é de até 13 mm \cite{fda2013}. A tensão induzida na RC também depende do número máximo de voltas dentro das dimensões especificadas. Normalmente, a RC usa três bobinas com um número igual de voltas, utilizando fio esmaltado de diâmetro menor (AWG 44/40/33).
+
+\subsection{Designs para as bobinas de recepção de energia}
+
+Os formatos das bobinas em sistemas de transmissão de energia sem fio para cápsulas endoscópicas variam significativamente em termos de forma e disposição. Um arranjo comum é o de bobinas planas, onde as bobinas transmissora e receptora são dispostas em um formato plano e circular. Esse tipo de configuração facilita a integração em um espaço limitado, como o interior de uma cápsula endoscópica. No entanto, a eficiência desse arranjo pode ser limitada pela necessidade de um alinhamento preciso e pela distância entre as bobinas \cite{kim2023design}. A orientação da RC é um elemento fundamental para a maximização da transferência de potência; idealmente, a área da seção transversal da bobina deve estar sempre perpendicular à direção do campo magnético emanado da bobina transmissora. Contudo, isso nem sempre é possível devido ao percurso irregular que a cápsula percorre no sistema digestivo.
+
+Para superar o desafio do alinhamento preciso e melhorar a eficiência da transmissão de energia, é recomendada a utilização de múltiplas bobinas dispostas em configurações geométricas específicas para melhorar a cobertura do campo magnético e a transferência de energia. Esse arranjo pode incluir bobinas dispostas em configurações de matriz ou em camadas sobrepostas, permitindo uma distribuição mais homogênea da energia ao redor da cápsula e compensando o movimento e o posicionamento variável da cápsula dentro do trato gastrointestinal \cite{chen2021design}. Esses avanços no design das bobinas contribuem significativamente para a melhoria da eficiência e confiabilidade dos sistemas de WPT em aplicações médicas. A Figura \ref{fig:sistema-endoscopia-capsula} ilustra um sistema de endoscopia com uma bobina transmissora externa composta por 2 solenóides em série, garantido fluxo magnético máximo na direção z, e em detalhe a cápsula de endoscopia equipada com três bobinas receptoras dispostas em quadratura.
+
+\begin{figure}[htbp]
+  \centering
+  \caption{Sistema de endoscopia com bobina transmissora externa e detalhe da cápsula de endoscopia com três bobinas receptoras em quadratura.}
+  \includegraphics[width=0.55\textwidth]{images/sistema-endoscopia-capsula0.png}\\
+  \label{fig:sistema-endoscopia-capsula}
+  \sourcecitation{\cite{murliky2022tracking}}
+\end{figure}
+
+\subsection{Circuito Retificador}
+\label{sec:ckt-retificador}
+
+Os esquemas de ponte completa (\textit{full-bridge}) ou onda completa (\textit{full-wave}) podem ser usados como circuitos retificadores. Embora ambos tenham a mesma eficiência, o esquema de onda completa requer menos diodos do que o de ponte completa, economizando componentes e espaço no circuito receptor. No entanto, um esquema de onda completa precisa de um número dobrado de espiras para a mesma potência recebida, o que aumenta o tamanho do RC. Os diodos de junção p-n usados nos circuitos retificadores normalmente têm uma queda de tensão direta de cerca de 350 mV a uma corrente de 100 mA. Conforme relatado em \cite{xin2010study}, a ponte completa empregando tal diodo causa uma perda de potência de aproximadamente 75 mW. Para superar esse problema, sugere-se a implementação de um circuito retificador de eficiência aprimorada por modo de chaveamento em \cite{sun2012two}, usando tecnologia CMOS, e a eficiência de retificação foi aumentada para 93,6\%, o que é 13,4\% melhor do que os designs anteriores.
+
+\begin{figure}[htbp]
+  \centering
+  \caption{Modelo do link indutivo com uma bobina transmissora e três bobinas receptoras localizadas dentro da cápsula endoscópica, que se move livremente através de translacões e rotações no trato gastrointestinal.}
+  \includegraphics[width=0.55\textwidth]{images/modelo-link-indutivo.png}\\
+  \label{fig:modelo-link-indutivo}
+  \sourcecitation{\cite{murliky2022tracking}}
+\end{figure}
+
+\section{Sistema Eletrônico para Cápsula Endoscópica}
+Visando validar conceitualmente os sistemas de \textit{hardware} que compõem a cápsula endoscópica e considerando o objetivo de modularização do \textit{hardware} proposto, o sistema eletrônico será dividido em quatro subsistemas: captura, processamento e transmissão dos dados, além disso o subsistema de alimentação já apresentado na Seção \ref{sec:energia_sem_fio}. A seguir, cada um desses subsistemas será explicado.
+
+\subsection{Captura}
+
+O sistema de captura de imagem é um dos componentes mais críticos de uma cápsula endoscópica, responsável pela aquisição de imagens do trato gastrointestinal para diagnóstico médico. Geralmente composto por uma câmera em miniatura e LEDs para iluminação.
+
+Em método tradicionais de endoscopia, vários modos de iluminação ajustáveis são utilizados, como a imagem de luz branca (WLI) e a imagem de banda estreita (NBI). A WLI, onde a luz branca é usada para iluminar a superfície gastrointestinal, é o modo de imagem mais comumente utilizado \cite{song2008narrow}. No modo NBI, geralmente são usadas duas bandas discretas de luz – uma azul e uma verde, com comprimento de onda central de 415 nm e 540 nm, respectivamente \cite{danese2010narrow}. A luz azul de banda estreita exibe redes capilares superficiais, enquanto a luz verde mostra os vasos, e quando combinadas, oferecem uma imagem de alto contraste da superfície do tecido. Na Figura \ref{fig:imageReal}, são mostradas uma imagem endoscópica típica de WLI e uma de NBI.
+
+\begin{figure}[htbp]
+  \centering
+  \caption{Uma imagem típica de endoscopia (a) WLI; (b) NBI.}
+  \includegraphics[width=0.5\textwidth]{images/wli-nbi.png}\\
+  \label{fig:imageReal}
+  \sourcecitation{\cite{rondonotti2015obscure}}
+\end{figure}
+
+Entre as opções de câmeras disponíveis, destacam-se os sensores CMOS e CCD. As câmeras CMOS são amplamente utilizadas devido ao seu baixo consumo de energia, custo reduzido e integração facilitada com outros componentes eletrônicos \cite{meng2021novel}. Já as câmeras CCD são conhecidas pela excelente qualidade de imagem e sensibilidade à luz, sendo ideais para ambientes com pouca iluminação, mas consomem mais energia além de serem mais caras \cite{meng2021novel}. Vale destacar que os sensores de imagem CMOS comerciais frequentemente utilizam uma varredura raster para enviar dados de imagem através de uma interface paralela \textit{Digital Video Port} (DVP). Esse método permite uma captura contínua e eficiente das imagens, mas gera grandes volumes de dados que precisam ser processados e comprimidos para a transmissão eficaz.
+
+\subsection{Processamento}
+
+O processamento de dados em cápsulas endoscópicas é essencial para garantir a eficiência na captura e transmissão das imagens. Devido à limitação de largura de banda e consumo de energia, a compressão de imagens é uma etapa crítica. A compressão pode ser realizada por \textit{software} ou \textit{hardware}, cada uma com suas vantagens e desvantagens. A compressão por \textit{software} oferece flexibilidade na escolha de algoritmos, mas pode consumir mais energia e tempo de processamento. Em contraste, a compressão por \textit{hardware} é mais eficiente em termos de energia e desempenho, mas pode aumentar a complexidade e o custo do design \cite{khan2013capsule}.
+
+Na escolha da tecnologia de processamento, tanto FPGAs quanto microcontroladores têm sido utilizados em protótipos de cápsulas endoscópicas. Trabalhos como \cite{cavallotti2011fpga} e \cite{covi2010miniaturized} demonstram o uso de FPGAs para compressão de dados e processamento de imagem, oferecendo vantagens em termos de processamento paralelo e desempenho. No entanto, FPGAs podem ser complexos e exigir conhecimento especializado para design e implementação.
+
+Por outro lado, microcontroladores comerciais oferecem uma abordagem mais acessível e menos complexa. Estudos como \cite{gao2022stable} e \cite{khan2020computer} mostram que microcontroladores podem integrar sensores de imagem, compressão de dados e módulos de comunicação em um sistema compacto e eficiente. A escolha de microcontroladores permite uma implementação mais simples e pode ser mais adequada para dispositivos com restrições de espaço e orçamento. Além disso, microcontroladores como os da família ARM Cortex-M3 oferecem um bom equilíbrio entre desempenho e eficiência energética, facilitando a integração de funções de captura de imagem, compressão e transmissão \cite{khan2013capsule}.
+
+O ARM Cortex-M3 e o Raspberry Pi Pico são duas opções populares para o processamento em cápsulas endoscópicas devido à sua eficiência energética e capacidade de processamento. O ARM Cortex-M3, com uma arquitetura de 32 bits, opera em frequências de até 100 MHz e oferece um baixo consumo de energia. Ele possui instruções de processamento rápido e uma gama de periféricos integrados, como interfaces SPI e I2C \cite{armCortexM3TRM}. Além disso, o Cortex-M3 suporta operações de ponto flutuante e DSP (\textit{Digital Signal Processing}), o que facilita a implementação de algoritmos complexos de processamento de imagem \cite{armCortexM3Processor}.
+
+O Raspberry Pi Pico, baseado no microcontrolador RP2040, é outra opção viável. Ele possui um processador dual-core ARM Cortex-M0+ operando a 133 MHz, com 264 KB de RAM e 2 MB de memória flash on-board. Este microcontrolador oferece excelente desempenho para tarefas de processamento de imagem, com suporte para múltiplas interfaces de comunicação, incluindo SPI, I2C e UART \cite{rp2040Datasheet}. A capacidade de processamento paralelo dos dois núcleos pode ser aproveitada para dividir as tarefas de captura e compressão de imagem, melhorando a eficiência geral do sistema. Além disso, o Raspberry Pi Pico é altamente acessível e fácil de programar, sendo uma escolha prática para protótipos de dispositivos médicos.
+
+\subsection{Transmissão}
+O transceptor RF é um componente essencial, responsável por enviar as informações coletadas pela cápsula para um receptor externo. Para sistemas implantáveis, o transceptor compatível com o Serviço de Comunicação Implantável Médica (MICS), que opera na faixa de frequência de 402-405 MHz, é uma opção ideal devido à sua capacidade de transmitir através do corpo humano \cite{fcc2002}. Contudo, o transceptor MICS disponível comercialmente, como o modelo ZL70102, possui uma taxa de dados efetiva de aproximadamente 500kbps \cite{valdastri2008transmission}, que não é suficiente nem mesmo para aplicação de endoscopia por cápsula. No PillCam é usado um MICS personalizado que oferece uma taxa de dados de 2.7 Mbps, mas não está disponível para compra pública \cite{Pillcam}.
+
+Como alternativa, o transceptor RF da Nordic \cite{nordic2013}, que opera na faixa de 2.4 GHz, pode ser utilizado devido à sua taxa de dados efetiva de 2 Mbps. O estudo \textcite{valdastri2008transmission} demonstra que transceptores de 2.4 GHz, como o da marca em questão, são adequados para transmissão de dados através de corpos animais. Esse transceptor inclui detecção de erros por verificação de redundância cíclica (CRC) e retransmissão automática. No modo de reconhecimento automático, o receptor verifica os bits CRC para identificar erros e solicita a retransmissão, reduzindo a perda de dados. Contudo, isso pode diminuir a largura de banda. O transceptor se comunica com o processador via interface SPI. Suas dimensões são 4 × 4 × 0.85 mm, e ele usa uma antena de chip de 2.4 GHz com 6.5 × 2.2 × 1 mm, permitindo uma integração compacta e eficiente no design da cápsula endoscópica.
+
+%%%%%%%%%%%%%%% RESULTADOS PRELIMINARES %%%%%%%%%%%%%%%
+
+% descrição da abordagem  de solução a ser explorada (3 paginas)
+\chapter{Abordagem Proposta}
+%TODO: parágrafo genérico apresentando o que será abordado.
+Neste capítulo, são apresentados os resultados preliminares obtidos até o momento. Primeiramente, são abordadas as definições de projeto, seguidas pela seleção e descrição dos componentes e materiais utilizados. Em seguida, são detalhados o design e o sistema receptor, incluindo as bobinas receptoras e o sistema de energização. Finalmente, são discutidos os aspectos do \textit{software} embarcado, como o controle da cápsula, o controle do sensor de imagem e a interface de comunicação, o compressor, o controle FIFO (\textit{First In, First Out}) e memória, além do gerenciamento de clock e reset.
+
+\section{Definições de Projeto}
+O objetivo deste projeto é desenvolver uma plataforma modular composta por blocos funcionais para validar os sistemas que compõem a cápsula endoscópica, sem a necessidade de construir um protótipo em escala real. A ênfase está na validação dos sistemas de gerenciamento da cápsula, transmissão de dados, captura de imagens e, possivelmente, na coleta de dados de sensores diversos, como temperatura, pH, pressão e dados de posição, conforme representado na Figura \ref{fig:diagrama}.
+
+\begin{figure}[htbp]
+  \centering
+  \caption{Diagrama da arquitetura eletrônica para a plataforma de validação da cápsula endoscópica.}
+  \includegraphics[width=0.75\textwidth]{images/diagrama.png}\\
+  \label{fig:diagrama}
+  \sourcecitation{Adaptado de \cite{zhang2024transmitter}}
+\end{figure}
+
+O sistema de energização utilizará baterias recarregáveis, sem incluir no escopo a confecção das bobinas receptoras para recarga sem fio. Em um protótipo real, seria empregado um sistema de recepção por indução para recarregar as baterias.
+
+O projeto foi concebido seguindo o princípio da modularidade, onde cada sistema da cápsula endoscópica é desenvolvido de forma independente, permitindo testes e validações individuais. Essa abordagem facilita a identificação e correção de possíveis problemas em cada subsistema, garantindo um processo de desenvolvimento mais eficiente e eficaz.
+
+A modularidade também foi escolhida para simplificar futuras etapas do projeto, como a miniaturização dos componentes e a construção de um protótipo em escala real. A separação dos sistemas em módulos distintos permitirá uma transição mais suave para a integração completa, otimizando o processo de miniaturização e montagem final da cápsula. Dessa forma, busca-se não apenas validar o conceito e a funcionalidade dos sistemas individualmente, mas também estabelecer uma base sólida para o desenvolvimento futuro de um dispositivo endoscópico totalmente funcional e miniaturizado.
+
+\subsection{Componentes e Materiais Utilizados}
+Os componentes selecionados para o projeto foram baseados em pesquisas relevantes na áraa de estudo, sobretudo nos trabalhos de  \textcite{khan2013capsule}, \textcite{zhang2024transmitter} e \textcite{cheng2010novel}. Cada componente foi escolhido por sua adequação e desempenho no sistema da cápsula endoscópica.
+
+O XC6206P332MR-G é um regulador LDO de 3.3V, utilizado no circuito de alimentação para garantir uma tensão estável. O MPU6050 é um sensor que combina acelerômetro e giroscópio, para detectar movimento e orientação da cápsula e fornecer esses dados ao sistema de transmissão de energia. Além desses, pretende-se incluir sensores de pH, temperatura e pressão, para validação do sistema de captura e transmissão de dados. A OVM7692 é uma câmera compacta que captura imagens de alta qualidade, escolhida com base no estudo \textcite{khan2013capsule} e pela disponibilidade de bibliotecas em C.
+
+Os LEDs 158301260, GD JTLPS1 e GT JTLPS1, que emitem luz branca, azul e verde, são utilizados para iluminação, permitindo a captura de imagens tanto no modo WBI quanto no modo NBI. O NRF24L01 é um transceptor RF que permite a comunicação sem fio entre a cápsula e o receptor externo, escolhido com base no estudo \textcite{khan2013capsule} e pela existência de bibliotecas em C para esse periférico, o módulo possui uma antena integrada ao \textit{chip}, eficiente para aplicações de curto alcance.
+
+%- XC6206P332MR-G - Regulador LDO 3V3
+%- MPU6050 - IMU acelerômetro e Gyro
+%- OVM7692 - Camera
+%- 158301260 - led branco
+%- GD JTLPS1.14 - led azul
+%- GT JTLPS1.13 - led verde
+%- NRF24L01 - transceiver rf
+
+%\section{Design e Sistema Receptor}
+
+%\subsection{Bobinas Receptoras}
+%A definição do design do sistema de recepção de energia da cápsula foi baseada nas dimensões de 13 mm × 27,9 mm \cite{zhang2024transmitter}. Será utilizado um anel de ferrite tubular com as mesmas dimensões e diâmetro interno de 11 mm. Embora este trabalho não vise a construção de uma cápsula em tamanho real com circuitos miniaturizados, as dimensões para a validação do sistema de recepção devem ser suficientes para acomodar os circuitos impressos, uma câmera, processador, LEDs e outros componentes da WCE.
+
+\section{Sistema de Energização}
+Como fonte de energia, será utilizado uma bateria recarregável e consequentemente um sistema para recargar conectado ao sistema de alimentação sem fio conforme descrito na Seção \ref{sec:energia_sem_fio}. No entanto, esse trabalho tem a proposta de desenvolver um sistema modular, em que fontes externas também podem ser utilizadas. Essa abordagem visa atender ao escopo do projeto, que é a validação conceitual do design da cápsula, sem preocupar-se com restrições de dimensões e eficiência. Além disso, serão incluídos os circuitos retificadores já descritos na Subseção \ref{sec:ckt-retificador} e os reguladores de tensão responsáveis por gerar valores de referência para alimentar o núcleo do processador, a câmera e o transceptor de RF. Esses níveis de tensão DC serão gerados usando reguladores de baixa queda de tensão (LDO) miniaturizados.
+
+\section{\textit{Software} Embarcado}
+Esta seção descreve o sistema de \textit{software} embarcado que será implementado no microcontrolador responsável pelo sistema de processamento da cápsula endoscópica. Na Figura \ref{fig:architecture} é apresentada uma proposta de arquitetura para o sistema embarcado da cápsula. Vale destacar que esta não é a versão final, pois ainda pretendemos integrar um sistema de \textit{Bluetooth Low Energy} (BLE) para fornecer dados de posição da cápsula coletados pela Unidade de Medição Inercial (IMU). Também está sendo considerada a implementação de uma comunicação \textit{half-duplex} entre a cápsula e um transmissor externo, o que permitiria a alteração de algumas configurações da câmera, assim como o tipo de luz usada para a captura.
+
+\subsection{Controle da Cápsula}
+O sistema de controle é responsável pela operação geral da cápsula endoscópica. Após receber um sinal de \textit{reset}, o sistema de controle inicializa os parâmetros do transceptor RF, como taxa de dados, frequência do canal, tamanho do pacote, modo de reconhecimento automático, etc. A comunicação com o transceptor RF é feita via interface SPI. Em seguida, o sistema de controle limpa o buffer FIFO interno do transceptor RF e o buffer do bloco de controle FIFO.
+
+O sistema de controle configura o sensor de imagem com o tamanho de quadro apropriado e ativa os LEDs por meio da saída PWM (\textit{Pulse Width Modulation}) para ajustar a intensidade da luz, garantindo iluminação adequada para capturar imagens de alta qualidade. Em seguida, o sistema envia um sinal de solicitação ao bloco compressor, que começa a transmitir bits de dados comprimidos da imagem capturada para o bloco de controle FIFO. O sistema solicita ao bloco de controle FIFO o envio de um pacote de dados completo (consistindo de 256 bits) para o transmissor RF, diretamente através do multiplexador MuxMOSI/SCK. Após o envio de um pacote, o sistema verifica se são necessários mais pacotes para o quadro de imagem atual; se necessário, o procedimento é repetido. Quando todos os pacotes para o quadro de imagem foram enviados, o sistema limpa o buffer FIFO do transceptor RF.
+
+\begin{figure}[htbp]
+  \centering
+  \caption{Arquitetura da cápsula.}
+  \includegraphics[width=0.8\textwidth]{images/architecture-capsule.png}\\
+  \label{fig:architecture}
+  \sourcecitation{Elaborado pelo autor (2024)}
+\end{figure}
+
+\subsection{Controle do Sensor de Imagem e Interface de comunicação}
+O microcontrolador configura o sensor de imagem de acordo com os comandos recebidos. Durante a fase de inicialização do sensor, ele configura os registros internos do sensor através da interface de comunicação. Após a configuração, o \textit{clock} do sensor é desligado para economizar energia, permitindo uma operação mais eficiente da cápsula.
+
+\subsection{Compressor}
+O \textit{firmware} do microcontrolador implementa um sistema de compressão de imagem de baixa complexidade, essencial para reduzir a quantidade de dados a serem transmitidos via RF. A compressão de imagem é crucial para garantir que os dados capturados pelo sensor de imagem possam ser transmitidos de maneira eficiente, sem sobrecarregar o canal de comunicação e consumindo menos energia.
+
+Atualmente, o algoritmo específico para a compressão de dados ainda precisa ser desenvolvido e será implementado via \textit{software}. Esse desenvolvimento deve levar em conta a capacidade de processamento do microcontrolador, a qualidade de imagem necessária para o diagnóstico médico e a eficiência energética da cápsula.
+
+\subsection{Controle FIFO e Memória}
+O buffer FIFO é usado como um intermediário para gerenciar a diferença entre a taxa de compressão de dados e a taxa de transmissão do transceptor RF. Ele armazena os dados comprimidos e os envia ao transceptor RF na ordem de chegada, garantindo uma transmissão contínua e eficiente dos dados de imagem.
+
+\subsection{\textit{Clock} e \textit{Reset}}
+O microcontrolador possui um gerador de \textit{clock} interno que fornece o sinal de temporização principal para o sistema. Esse clock é utilizado para sincronizar todas as operações internas do microcontrolador e dos periféricos conectados a ele.
+
+O sensor de imagem da cápsula endoscópica possui requisitos diferentes de frequência de clock durante suas fases de operação. Durante a inicialização, o sensor de imagem precisa de uma frequência de clock mais alta para configurar corretamente seus parâmetros. Após a inicialização, o sensor pode operar com uma frequência de clock mais baixa, suficiente para o número de quadros por segundo (FPS) necessário na aplicação da cápsula endoscópica.
+O sistema inclui um multiplexador de clock, controlado pelo bloco de controle da cápsula, que alterna entre os diferentes sinais de clock conforme necessário. Esse mecanismo assegura que o sensor de imagem receba a frequência de clock adequada em cada fase de operação, sem introduzir erros ou interrupções no funcionamento do sistema.
+
+O bloco de \textit{reset} garante que todos os componentes do sistema comecem a operar a partir de um estado estável e conhecido quando o sistema é ligado. Esse bloco é composto por um circuito RC, que gera um pulso de reset inicializando o microcontrolador e seus componentes, e por rotinas de inicialização no firmware, que configuram os registros internos e periféricos para seus estados padrão. Isso é crucial para evitar comportamentos indesejados ou falhas de inicialização, garantindo a segurança e a confiabilidade do sistema.
+
+
+%%%%%%%%%%%%%%% PROPOSTA DO TRABALHO %%%%%%%%%%%%%%%
+
+% proposta de solução e planejamento do TCC2, etapas e cronograma (2 paginas)
+\chapter{Proposta de trabalho}
+
+O cronograma de atividades para a conclusão do projeto inclui diversas etapas essenciais. Inicialmente, será realizado o ajuste das definições de projeto, que envolve a revisão e refinamento das especificações para garantir que estejam alinhadas com os objetivos do trabalho. Simultaneamente, serão definidos os circuitos e as conexões entre os componentes da cápsula e será projetada a máquina de estados de controle, responsável por gerenciar o comportamento da cápsula durante a operação.
+
+Em seguida, será iniciado o desenvolvimento das bibliotecas de \textit{software} para a câmera e o transceptor, juntamente com a implementação inicial do código de \textit{software} embarcado. Também serão conduzidos testes com o sistema de transmissão de dados, visando verificar a qualidade e a confiabilidade da comunicação das informações capturadas pela câmera.
+
+A próxima fase inclui os testes com o sistema de alimentação, incluindo retificadores e reguladores de tensão, e com o sistema de aquisição de dados de imagem, para garantir seu funcionamento adequado e a qualidade das imagens capturadas. O desenvolvimento do algoritmo de controle da cápsula será iniciado, permitindo o gerenciamento e a coordenação das operações dos subsistemas. Paralelamente, será realizada a validação e a integração dos sistemas para garantir que todos os componentes funcionem em conjunto de maneira eficiente.
+
+Na etapa final, a validação, a integração e os ajustes finos dos sistemas serão completados para otimizar o desempenho da cápsula. A escrita do segundo capítulo do TCC-2 será uma tarefa contínua, abordando os aspectos do desenvolvimento e os resultados obtidos. Esse processo garantirá a finalização e a preparação do documento para a apresentação e defesa do projeto. A síntese dessa explicação pode ser vista na Tabela \ref{table:cronograma}.
+
+% 01/09/24 a 18/01/25
+\begin{table}[htb]
+  \begin{center}
+    \caption{Cronograma previsto de atividades}\label{table:cronograma}
+    \label{table:cronograma}
+    \begin{tabular}{c|p{10cm}}
+	\hline
+	\centering 1-3 & Ajuste das definições de projeto \\
+	& Definição dos circuitos e conexões \\
+	& Projeto da máquina de estados de controle da cápsula \\
+	\hline
+	\centering 4-6 & Desenvolvimento das bibliotecas para câmera e transceiver \\
+	& Implementação do algoritmo no microcontrolador \\
+	\hline
+	\centering 7-9 & Testes com o sistema de alimentação, retificadores e reguladores de tensão \\
+	& Implementação do algoritmo no microcontrolador \\
+	& Testes com o sistema de aquisição de dados \\
+	\hline
+	\centering 10-12 & Testes com o sistema de aquisição de dados\\
+	& Testes com o sistema de transmissão \\
+	\hline
+	\centering 13-15 & Desenvolvimento do algoritmo de controle da cápsula \\
+	& Validação e integração dos sistemas \\
+	& Escrita do TCC2 \\
+	\hline
+	\centering 15-16 & Validação, integração e ajustes finos \\
+	& Escrita do TCC2 \\
+	\hline
+	\centering 16-17 & Validação, integração e ajustes finos \\
+	& Escrita do TCC2 \\
+	\hline
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\printbibliography
+
+\end{document}
+

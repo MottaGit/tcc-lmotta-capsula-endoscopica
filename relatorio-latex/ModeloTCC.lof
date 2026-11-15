@@ -1,0 +1,15 @@
+\babel@toc {brazilian}{}\relax 
+\babel@toc {brazilian}{}\relax 
+\babel@toc {english}{}\relax 
+\babel@toc {brazilian}{}\relax 
+\contentsline {figure}{\numberline {1}{\ignorespaces Exemplos de cápsulas endoscópicas existentes incluem: (a) um protótipo desenvolvido em um estudo utilizando FPGA e bateria não recarregável; (b) um protótipo de WCE com bateria recarregável; e (c) o modelo comercial PillCam ESO 2.}}{14}{figure.caption.10}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Requisito de energia para diferentes modelos de WCE.}}{14}{figure.caption.12}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Sistema de endoscopia com bobina transmissora externa e detalhe da cápsula de endoscopia com três bobinas receptoras em quadratura.}}{16}{figure.caption.15}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Uma imagem típica de endoscopia (a) WLI; (b) NBI.}}{17}{figure.caption.19}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Estrutura do pacote RF do NRF24L01, contendo preâmbulo, endereço, campo de controle, payload e CRC.}}{21}{figure.caption.30}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Diagrama esquemático da arquitetura de hardware proposta, conexões para a câmera (a esquerda), conexões para o módulo transmissor (a direita).}}{25}{figure.caption.35}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Fluxograma do código de transmissão implementado no microcontrolador.}}{26}{figure.caption.41}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Na esquerda exemplo de imagem reconstruída via transmissão serial direta, na direita exemplo de imagem reconstruída com glitches.}}{27}{figure.caption.45}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Montagem experimental da transmissão sem fio com módulos NRF24L01+.}}{29}{figure.caption.48}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Comparativo entre imagens transmitidas sem compressão (esquerda) e com compressão RLE (direita).}}{30}{figure.caption.52}%
+\contentsfinish 
