@@ -5,29 +5,28 @@
 #pragma once
 
 // ----------------------------------------------------------------------------
-// Etapa do experimento
+// Etapa do TCC a reproduzir (Capítulo 4 da monografia)
 // ----------------------------------------------------------------------------
-// ENLACE_RADIO  -> pacotes vão pelo nRF24L01+ (Etapas 3 e 4 do TCC). A USB
-//                  fica livre para mensagens de depuração a BAUD_DEPURACAO.
-// ENLACE_SERIAL -> os mesmos pacotes vão direto pela USB, sem rádio (Etapa 2:
-//                  valida o protocolo isolando o enlace sem fio). Abra o
-//                  software de PC na porta do Mega em vez da porta do Uno.
-#define ENLACE_RADIO  1
-#define ENLACE_SERIAL 2
-#define ENLACE        ENLACE_RADIO
+//  1 = dados brutos pela USB: 76.800 bytes por quadro, sem cabeçalho
+//  2 = protocolo de pacotes pela USB, com perdas e reordenação artificiais
+//  3 = rádio nRF24L01+, sem compressão
+//  4 = rádio + RLE (configuração final do TCC)
+// Nas etapas 1 e 2, rode o software de PC na porta do Mega; nas 3 e 4, na do Uno.
+#define ETAPA 4
 
-// 1 = aplica RLE nas linhas em que ele reduz o tamanho (Etapa 4); 0 = só bruto.
-#define USAR_RLE 1
-
-// Descarta de propósito N pacotes a cada 1000 (teste de robustez da Etapa 2).
-#define PERDA_SIMULADA_POR_MIL 0
+// Compressão por linha nas etapas 2 a 4. Padrão: RLE na etapa 4, nenhuma nas
+// outras. COMP_RICE escolhe, linha a linha, o menor entre bruto, RLE e
+// DPCM + Golomb-Rice (mais eficiente em cenas com ruído; ver docs/compressao.md).
+// #define COMPRESSAO COMP_RICE
 
 // ----------------------------------------------------------------------------
 // Câmera OV7670 (QVGA 320x240, YUV422, só a luminância Y é usada)
 // ----------------------------------------------------------------------------
 // Divisor do relógio interno da câmera: f = XCLK (8 MHz) / (N + 1).
 // Menor = câmera mais rápida. Abaixo de 4 o laço de leitura não acompanha o PCLK.
-#define CAMERA_PRESCALER 5
+// Na etapa 1 a câmera precisa ser lenta o bastante para cada linha caber na
+// serial antes da próxima (~2 s por quadro).
+#define CAMERA_PRESCALER (ETAPA == 1 ? 20 : 5)
 
 // Bytes descartados no começo de cada linha para alinhar com o primeiro Y.
 // Se a imagem sair com textura "quadriculada"/listrada (lendo U/V no lugar de Y),
@@ -53,5 +52,34 @@ static const uint8_t ENDERECO_RADIO[6] = "CAPS1";
 // ----------------------------------------------------------------------------
 // Serial (USB)
 // ----------------------------------------------------------------------------
-#define BAUD_DEPURACAO     115200    // ENLACE_RADIO: mensagens de texto
-#define BAUD_ENLACE_SERIAL 1000000   // ENLACE_SERIAL: mesmo formato e velocidade do receptor
+#define BAUD_DEPURACAO     115200    // etapas 3 e 4: mensagens de texto
+#define BAUD_ENLACE_SERIAL 1000000   // etapas 1 e 2: mesmo formato e velocidade do receptor
+
+// ============================================================================
+// Derivado da etapa (normalmente não precisa mexer daqui para baixo)
+// ============================================================================
+#define ENLACE_RADIO        1
+#define ENLACE_SERIAL       2
+#define ENLACE_SERIAL_BRUTO 3
+
+#if ETAPA == 1
+#define ENLACE ENLACE_SERIAL_BRUTO
+#elif ETAPA == 2
+#define ENLACE ENLACE_SERIAL
+#elif ETAPA == 3 || ETAPA == 4
+#define ENLACE ENLACE_RADIO
+#else
+#error "ETAPA deve ser 1, 2, 3 ou 4"
+#endif
+
+#ifndef COMPRESSAO
+#define COMPRESSAO (ETAPA == 4 ? COMP_RLE : COMP_NENHUMA)
+#endif
+
+// Etapa 2: descarta e troca a ordem de alguns pacotes de propósito (por mil).
+#ifndef PERDA_SIMULADA_POR_MIL
+#define PERDA_SIMULADA_POR_MIL (ETAPA == 2 ? 20 : 0)
+#endif
+#ifndef REORDENACAO_SIMULADA_POR_MIL
+#define REORDENACAO_SIMULADA_POR_MIL (ETAPA == 2 ? 10 : 0)
+#endif

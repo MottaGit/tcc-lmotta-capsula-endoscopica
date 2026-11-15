@@ -1,7 +1,9 @@
 // =============================================================================
 //  Transmissor da cápsula endoscópica  -  Arduino Mega 2560
 //
-//  OV7670 (QVGA, luminância) -> empacotamento + RLE -> nRF24L01+ (ou USB)
+//  OV7670 (QVGA, luminância) -> compressão + pacotes -> nRF24L01+ (ou USB)
+//
+//  A etapa do TCC (1 a 4) é escolhida em config.h com #define ETAPA.
 //
 //  Bibliotecas: RF24 (TMRh20) pelo Gerenciador de Bibliotecas. O driver da
 //  câmera (LiveOV7670, de Indrek Luuk) já vem junto em src/LiveOV7670.
@@ -15,8 +17,10 @@
 //  as linhas que passam. Terminado o envio, ele pega a próxima linha ainda não
 //  enviada que a câmera for entregar. As linhas puladas são capturadas nos
 //  quadros seguintes da câmera, até a imagem estar completa (EOF). Assim a
-//  captura nunca perde o sincronismo, mesmo quando o rádio retransmite, e o
-//  RLE (envio mais curto) se traduz diretamente em mais quadros por segundo.
+//  captura nunca perde o sincronismo, mesmo quando o rádio retransmite, e a
+//  compressão (envio mais curto) se traduz diretamente em mais quadros por
+//  segundo. Na etapa 1 (sem cabeçalho) as linhas precisam sair em ordem, então
+//  só a próxima linha da sequência é aceita.
 // =============================================================================
 
 #include <SPI.h>
@@ -41,8 +45,8 @@ using namespace protocolo;
 const uint8_t PINO_VSYNC = 2;
 const uint8_t PINO_HREF  = 3;
 
-#if ENLACE == ENLACE_SERIAL
-#define LOG(...)                       // a USB transporta os pacotes binários
+#if ENLACE != ENLACE_RADIO
+#define LOG(...)                       // a USB transporta os dados binários
 #define LOGLN(...)
 #else
 #define LOG(...)   Serial.print(__VA_ARGS__)
@@ -61,6 +65,7 @@ volatile uint16_t g_quadrosCamera = 0;    // VSYNCs (quadros entregues pela câm
 uint8_t linha[LARGURA];                   // luminância da linha capturada
 uint8_t pendentes[(ALTURA + 7) / 8];      // 1 bit por linha ainda não enviada
 uint8_t idImagem = 0;
+int16_t somenteLinha = -1;                // etapa 1: só aceita esta linha (ordem)
 
 // ---- Interrupções: contam as linhas enquanto o rádio está ocupado ----------
 void aoVsync() { g_linhasIniciadas = 0; g_quadrosCamera++; }
@@ -79,17 +84,50 @@ inline bool estaPendente(uint8_t y) { return pendentes[y >> 3] & (1 << (y & 7));
 inline void marcarEnviada(uint8_t y) { pendentes[y >> 3] &= ~(1 << (y & 7)); }
 
 // ---- Envio -----------------------------------------------------------------
-bool enviarPacote(const uint8_t *pacote) {
-#if PERDA_SIMULADA_POR_MIL > 0
-  if (random(1000) < PERDA_SIMULADA_POR_MIL) return false;
-#endif
-#if ENLACE == ENLACE_SERIAL
+static bool transmitir(const uint8_t *pacote) {
+#if ENLACE == ENLACE_RADIO
+  return radio.write(pacote, TAMANHO_PACOTE);  // auto-ack + até 15 retransmissões
+#else
   Serial.write(SYNC0);
   Serial.write(SYNC1);
   Serial.write(pacote, TAMANHO_PACOTE);
   return true;
+#endif
+}
+
+#if REORDENACAO_SIMULADA_POR_MIL > 0
+uint8_t pacoteAdiado[TAMANHO_PACOTE];
+bool temPacoteAdiado = false;
+#endif
+
+// Envia um pacote; na etapa 2 descarta ou atrasa alguns de propósito.
+bool enviarPacote(const uint8_t *pacote) {
+#if PERDA_SIMULADA_POR_MIL > 0
+  if (random(1000) < PERDA_SIMULADA_POR_MIL) return false;
+#endif
+#if REORDENACAO_SIMULADA_POR_MIL > 0
+  if (!temPacoteAdiado && random(1000) < REORDENACAO_SIMULADA_POR_MIL) {
+    memcpy(pacoteAdiado, pacote, TAMANHO_PACOTE);  // vai depois do próximo
+    temPacoteAdiado = true;
+    return true;
+  }
+  const bool ok = transmitir(pacote);
+  if (temPacoteAdiado) {
+    transmitir(pacoteAdiado);
+    temPacoteAdiado = false;
+  }
+  return ok;
 #else
-  return radio.write(pacote, TAMANHO_PACOTE);  // auto-ack + até 15 retransmissões
+  return transmitir(pacote);
+#endif
+}
+
+static void descarregarPacoteAdiado() {
+#if REORDENACAO_SIMULADA_POR_MIL > 0
+  if (temPacoteAdiado) {
+    transmitir(pacoteAdiado);
+    temPacoteAdiado = false;
+  }
 #endif
 }
 
@@ -149,7 +187,8 @@ static int16_t capturarProximaLinhaPendente() {
 
     // HREF está em nível baixo: a próxima subida é a linha número `linhas`.
     const int16_t y = (int16_t)linhas - LINHAS_DE_AJUSTE;
-    const bool queremos = y >= 0 && y < ALTURA && estaPendente((uint8_t)y);
+    const bool queremos = y >= 0 && y < ALTURA && estaPendente((uint8_t)y) &&
+                          (somenteLinha < 0 || y == somenteLinha);
     if (linhas == 255) {  // contagem saturou (um quadro tem ~245 linhas): ressincroniza
       if (!sincronizarComQuadro()) return -1;
       linhas = 0;
@@ -194,10 +233,10 @@ static void parar(const __FlashStringHelper *mensagem) {
 }
 
 void setup() {
-#if ENLACE == ENLACE_SERIAL
-  Serial.begin(BAUD_ENLACE_SERIAL);
-#else
+#if ENLACE == ENLACE_RADIO
   Serial.begin(BAUD_DEPURACAO);
+#else
+  Serial.begin(BAUD_ENLACE_SERIAL);
 #endif
   LOGLN(F("\nTransmissor da capsula endoscopica"));
 
@@ -232,11 +271,32 @@ void setup() {
   LOGLN(F("Transmitindo..."));
 }
 
+// Etapa 1: o quadro inteiro, linha por linha e em ordem, sem cabeçalho.
+static void enviarQuadroBruto() {
+  memset(pendentes, 0xFF, sizeof(pendentes));
+  Serial.write(MARCADOR_QUADRO_BRUTO, sizeof(MARCADOR_QUADRO_BRUTO));
+  for (int16_t y = 0; y < ALTURA;) {
+    somenteLinha = y;
+    if (capturarProximaLinhaPendente() < 0) {
+      ressincronizar();
+      continue;
+    }
+    Serial.write(linha, LARGURA);
+    y++;
+  }
+  somenteLinha = -1;
+}
+
 void loop() {
+#if ENLACE == ENLACE_SERIAL_BRUTO
+  enviarQuadroBruto();
+  return;
+#endif
+
   memset(pendentes, 0xFF, sizeof(pendentes));
   uint8_t restantes = ALTURA;
   uint16_t falhas = 0;
-  uint8_t linhasRle = 0;
+  uint8_t linhasPorCodificacao[3] = {0, 0, 0};
   const uint16_t quadrosCameraInicio = g_quadrosCamera;
   empacotador.novoQuadro(idImagem);
 
@@ -249,9 +309,10 @@ void loop() {
     }
     marcarEnviada((uint8_t)y);
     restantes--;
-    falhas += empacotador.enviarLinha((uint8_t)y, linha, USAR_RLE, restantes == 0);
-    if (empacotador.ultimaLinhaFoiRle()) linhasRle++;
+    falhas += empacotador.enviarLinha((uint8_t)y, linha, COMPRESSAO, restantes == 0);
+    linhasPorCodificacao[empacotador.ultimaCodificacao()]++;
   }
+  descarregarPacoteAdiado();
 
   const uint16_t pacotes = empacotador.pacotesNoQuadro();
   LOG(F("Imagem "));
@@ -262,9 +323,13 @@ void loop() {
   LOG(falhas);
   LOG(F(" sem ACK ("));
   LOG(100.0 * (pacotes - falhas) / pacotes, 1);
-  LOG(F("% entregues), RLE em "));
-  LOG(linhasRle);
-  LOG(F(" linhas, "));
+  LOG(F("% entregues) | linhas bruto/RLE/Rice: "));
+  LOG(linhasPorCodificacao[COD_BRUTO]);
+  LOG('/');
+  LOG(linhasPorCodificacao[COD_RLE]);
+  LOG('/');
+  LOG(linhasPorCodificacao[COD_RICE]);
+  LOG(F(" | "));
   LOG((uint16_t)(g_quadrosCamera - quadrosCameraInicio));
   LOGLN(F(" quadros da camera"));
 

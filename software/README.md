@@ -1,13 +1,12 @@
 # Software de PC (Python)
 
-Recebe os pacotes do receptor pela USB, valida o CRC-8, reordena, descarta
-duplicados, desfaz o RLE e salva cada imagem em PNG, com estatísticas de
-entrega por quadro. Inclui um **simulador** que gera o mesmo fluxo de bytes
-sem nenhum hardware, inclusive com perdas, duplicações e reordenação
-artificiais, como na Etapa 2 do TCC.
+Recebe os dados do Arduino, valida o CRC-8, reordena, descarta duplicados,
+descomprime (RLE ou DPCM + Rice) e salva cada imagem em PNG, com métricas de
+entrega. Inclui um **simulador** do transmissor e do canal (perdas,
+duplicação, reordenação) e a **comparação de algoritmos de compressão**.
 
-Não depende de nada além da biblioteca padrão do Python 3.9+. O `pyserial`
-só é necessário para ler a porta serial ao vivo.
+Usa só a biblioteca padrão do Python 3.9+. O `pyserial` é necessário apenas
+para ler a porta serial ao vivo.
 
 ```bash
 cd software
@@ -17,68 +16,50 @@ cd software
 pip install -r requirements.txt
 ```
 
-## Demonstração sem hardware
+## Comandos
+
+| Comando | O que faz |
+|---|---|
+| `python -m capsula.receber --porta COM5` | recebe ao vivo do Uno (etapas 3 e 4) ou do Mega (etapa 2) |
+| `python -m capsula.receber --porta COM3 --bruto` | etapa 1: quadros brutos do Mega |
+| `python -m capsula.receber --arquivo demo.bin` | reprocessa uma gravação ou saída do simulador |
+| `python -m capsula.simular --saida demo.bin --perda 0.03` | gera o fluxo de bytes do receptor, sem hardware |
+| `python -m capsula.compressao` | compara RLE, DPCM + RLE, DPCM + Rice, MED + Rice e DEFLATE |
+| `python ferramentas/gerar_figuras.py` | recria as figuras do README em `docs/imagens/` |
+| `python ferramentas/hex_para_png.py arquivo.txt` | converte um despejo hexadecimal da câmera e aponta bits presos |
+| `python -m unittest discover -s tests` | roda os 29 testes |
+
+Opções do `receber`: `--saida pasta` (PNG), `--csv metricas.csv` (uma linha
+por quadro), `--faltantes anterior` (repete o quadro anterior nas linhas
+perdidas), `--gravar sessao.bin` (bytes brutos para reprocessar) e
+`--quadros N`.
+
+Opções do `simular`: `--quadros N`, `--compressao bruto|rle|rice`,
+`--perda`, `--duplicar`, `--reordenar`, `--ruido 2.5`, `--imagem foto.pgm`
+e `--bruto` (etapa 1).
+
+## Exemplo
 
 ```bash
 python -m capsula.simular --saida demo.bin --quadros 2 --perda 0.03 --duplicar 0.005 --reordenar 0.01
 ```
 
 ```bash
-python -m capsula.receber --arquivo demo.bin --saida capturas-demo
+python -m capsula.receber --arquivo demo.bin --csv metricas.csv
 ```
 
-Saída esperada (resumida):
-
 ```
-Quadro   0: 1736/1782 pacotes (97.4%), linhas 200 completas / 31 parciais / 9 faltantes, RLE em 231 linhas (39.8% menor), 8 duplicados -> quadro_0001.png
+Quadro   0: 1736/1782 pacotes (97.4%), linhas 200 completas / 31 parciais / 9 faltantes, RLE/Rice em 231/0 linhas (39.8% menor), 8 duplicados -> quadro_0001.png
 ```
-
-![Simulação: imagem original (esq.) e remontada com 3% de perda (dir.)](../docs/imagens/demo-simulacao.png)
-
-Opções úteis do simulador: `--sem-rle`, `--ruido 3` (cena mais ruidosa, o
-RLE rende menos), `--imagem foto.pgm` (usa uma imagem sua em PGM binário).
-
-## Com o hardware
-
-```bash
-python -m capsula.receber --porta COM5
-```
-
-No Linux/macOS a porta é algo como `/dev/ttyACM0`. Opções:
-
-| Opção | Efeito |
-|---|---|
-| `--saida pasta` | onde salvar os PNG (padrão: `capturas/`) |
-| `--faltantes anterior` | linhas perdidas repetem o quadro anterior em vez de ficar pretas |
-| `--gravar sessao.bin` | grava os bytes brutos para reprocessar depois com `--arquivo` |
-| `--quadros N` | para depois de N imagens |
-| `--baud` | velocidade da serial (padrão 1000000, igual ao receptor) |
-
-## Ferramentas
-
-* [`ferramentas/hex_para_png.py`](ferramentas/hex_para_png.py): converte um
-  despejo hexadecimal da câmera em PNG e aponta bits de dados presos
-  (foi usado na captura em [`experimentos/`](../experimentos)).
-
-## Testes
-
-```bash
-python -m unittest discover -s tests -v
-```
-
-Os testes cobrem o CRC-8 (com o valor de verificação padrão), a
-ida e volta do RLE, o formato dos pacotes (incluindo o vetor de
-referência de [`docs/protocolo.md`](../docs/protocolo.md)), a
-ressincronização da serial e a remontagem com perdas, duplicados e pacotes
-fora de ordem.
 
 ## Organização
 
 | Arquivo | Conteúdo |
 |---|---|
-| `capsula/protocolo.py` | formato do pacote, CRC-8, empacotador (igual ao firmware), leitor da serial |
-| `capsula/rle.py` | codificação e decodificação RLE |
-| `capsula/remontagem.py` | remontagem dos quadros e estatísticas |
-| `capsula/receber.py` | linha de comando: serial/arquivo -> PNG |
-| `capsula/simular.py` | linha de comando: gera um fluxo como o do receptor |
+| `capsula/protocolo.py` | pacote, CRC-8, empacotador (igual ao firmware), leitores da serial |
+| `capsula/rle.py`, `capsula/rice.py` | codificadores usados no firmware |
+| `capsula/compressao.py` | comparação de algoritmos (inclui DPCM + RLE, MED + Rice e DEFLATE) |
+| `capsula/remontagem.py` | remontagem dos quadros e métricas |
+| `capsula/receber.py`, `capsula/simular.py` | linha de comando |
 | `capsula/imagem.py` | PNG/PGM em tons de cinza sem dependências |
+| `tests/` | testes do protocolo, da compressão e da remontagem |

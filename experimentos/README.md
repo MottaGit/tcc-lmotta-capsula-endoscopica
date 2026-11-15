@@ -31,4 +31,4 @@ lento demais para acompanhar o PCLK. Esses dois problemas motivaram:
 
 Os resultados quantitativos (quatro etapas de validação) estão no
 Capítulo 4 da [monografia](../docs/monografia-tcc2.pdf) e resumidos no
-[README principal](../README.md#resultados).
+[README principal](../README.md#resultados-as-4-etapas-de-validação).

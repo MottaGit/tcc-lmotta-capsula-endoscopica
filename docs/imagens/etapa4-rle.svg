@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="268" viewBox="0 0 760 268" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect x="0.5" y="0.5" width="759" height="267" rx="10" fill="#ffffff" stroke="#e5e7eb"/>
+  <text x="24.0" y="34.0" font-size="18" fill="#111827" text-anchor="start" font-weight="600">Etapa 4: efeito do RLE no enlace sem fio</text>
+  <text x="24.0" y="56.0" font-size="13" fill="#6b7280" text-anchor="start" font-weight="400">Médias medidas em bancada (monografia, Capítulo 4)</text>
+  <text x="124.0" y="96.3" font-size="13" fill="#111827" text-anchor="end" font-weight="400">Bytes/quadro</text>
+  <rect x="134.0" y="80.0" width="602.0" height="24.0" rx="3" fill="#f3f4f6" stroke="none"/>
+  <rect x="134.0" y="80.0" width="602.0" height="24.0" rx="3" fill="#9ca3af" stroke="none"/>
+  <text x="728.0" y="96.3" font-size="13" fill="#ffffff" text-anchor="end" font-weight="600">76.800 sem compressão</text>
+  <text x="124.0" y="126.3" font-size="13" fill="#111827" text-anchor="end" font-weight="400"></text>
+  <rect x="134.0" y="110.0" width="602.0" height="24.0" rx="3" fill="#f3f4f6" stroke="none"/>
+  <rect x="134.0" y="110.0" width="395.1" height="24.0" rx="3" fill="#16a34a" stroke="none"/>
+  <text x="521.1" y="126.3" font-size="13" fill="#ffffff" text-anchor="end" font-weight="600">50.400 com RLE  (−34,4%)</text>
+  <text x="124.0" y="170.3" font-size="13" fill="#111827" text-anchor="end" font-weight="400">Quadros/s</text>
+  <rect x="134.0" y="154.0" width="602.0" height="24.0" rx="3" fill="#f3f4f6" stroke="none"/>
+  <rect x="134.0" y="154.0" width="399.2" height="24.0" rx="3" fill="#9ca3af" stroke="none"/>
+  <text x="525.2" y="170.3" font-size="13" fill="#ffffff" text-anchor="end" font-weight="600">1,00× sem compressão</text>
+  <text x="124.0" y="200.3" font-size="13" fill="#111827" text-anchor="end" font-weight="400"></text>
+  <rect x="134.0" y="184.0" width="602.0" height="24.0" rx="3" fill="#f3f4f6" stroke="none"/>
+  <rect x="134.0" y="184.0" width="602.0" height="24.0" rx="3" fill="#16a34a" stroke="none"/>
+  <text x="728.0" y="200.3" font-size="13" fill="#ffffff" text-anchor="end" font-weight="600">1,51× com RLE  (+50,8%)</text>
+  <text x="24.0" y="252.0" font-size="12" fill="#6b7280" text-anchor="start" font-weight="400">Pacotes entregues: 97,4% sem compressão e 96,8% com RLE</text>
+</svg>

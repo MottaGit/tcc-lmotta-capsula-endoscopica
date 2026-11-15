@@ -58,7 +58,7 @@ class TestRle(unittest.TestCase):
 class TestEmpacotador(unittest.TestCase):
     def test_linha_bruta_usa_12_pacotes_com_flags_corretas(self):
         emp = p.Empacotador(3)
-        pacotes = emp.linha(10, linha_gradiente(), comprimir=False)
+        pacotes = emp.linha(10, linha_gradiente(), modo="bruto")
         self.assertEqual(len(pacotes), 12)
         self.assertTrue(pacotes[0].tem(p.SOF) and pacotes[0].tem(p.SOL))
         self.assertEqual(pacotes[0].payload[:2], bytes([10, p.COD_BRUTO]))
@@ -68,8 +68,8 @@ class TestEmpacotador(unittest.TestCase):
 
     def test_ultima_linha_marca_eof_e_sof_so_no_primeiro(self):
         emp = p.Empacotador(0)
-        primeiro = emp.linha(0, linha_gradiente(), comprimir=False)
-        ultimo = emp.linha(1, linha_gradiente(), ultima=True, comprimir=False)
+        primeiro = emp.linha(0, linha_gradiente(), modo="bruto")
+        ultimo = emp.linha(1, linha_gradiente(), ultima=True, modo="bruto")
         self.assertTrue(ultimo[-1].tem(p.EOF))
         self.assertFalse(any(q.tem(p.SOF) for q in primeiro[1:] + ultimo))
 
@@ -91,7 +91,7 @@ class TestEmpacotador(unittest.TestCase):
 
 class TestLeitorSerial(unittest.TestCase):
     def test_ignora_texto_e_ressincroniza(self):
-        pacotes = p.Empacotador(1).linha(0, linha_gradiente(), comprimir=False)
+        pacotes = p.Empacotador(1).linha(0, linha_gradiente(), modo="bruto")
         fluxo = b"Receptor pronto\r\n" + b"".join(p.enquadrar(q) for q in pacotes)
         fluxo = fluxo[:60] + b"\xA5\x5Alixo" + fluxo[60:]  # SYNC falso no meio do caminho
         leitor = p.LeitorSerial()
@@ -100,6 +100,18 @@ class TestLeitorSerial(unittest.TestCase):
             recebidos += list(leitor.alimentar(fluxo[i:i + 7]))
         self.assertGreaterEqual(len(recebidos), len(pacotes) - 1)
         self.assertTrue(set(q.seq for q in recebidos) >= set(range(2, 12)))
+
+
+class TestQuadrosBrutos(unittest.TestCase):
+    def test_etapa1_recupera_quadros_entre_lixo(self):
+        q1, q2 = bytes(range(256)) * 300, bytes(76800)
+        fluxo = b"lixo" + p.MARCADOR_QUADRO_BRUTO + q1 + p.MARCADOR_QUADRO_BRUTO + q2
+        leitor = p.LeitorQuadrosBrutos()
+        quadros = []
+        for i in range(0, len(fluxo), 1000):
+            quadros += list(leitor.alimentar(fluxo[i:i + 1000]))
+        self.assertEqual(quadros, [q1, q2])
+        self.assertEqual(leitor.bytes_descartados, 4)
 
 
 if __name__ == "__main__":

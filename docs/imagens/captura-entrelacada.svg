@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="284" viewBox="0 0 760 284" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect x="0.5" y="0.5" width="759" height="283" rx="10" fill="#ffffff" stroke="#e5e7eb"/>
+  <text x="24.0" y="34.0" font-size="18" fill="#111827" text-anchor="start" font-weight="600">Captura entrelaçada: o rádio é mais lento que a câmera</text>
+  <text x="24.0" y="56.0" font-size="13" fill="#6b7280" text-anchor="start" font-weight="400">Enquanto uma linha é transmitida, a câmera entrega outras; elas são pegas nos quadros seguintes.</text>
+  <rect x="84.0" y="76.0" width="300.0" height="9.0" rx="2" fill="#2563eb" stroke="none"/>
+  <text x="76.0" y="84.0" font-size="9" fill="#6b7280" text-anchor="end" font-weight="400">linha 0</text>
+  <rect x="84.0" y="88.0" width="300.0" height="9.0" rx="2" fill="#f59e0b" stroke="none"/>
+  <text x="76.0" y="96.0" font-size="9" fill="#6b7280" text-anchor="end" font-weight="400">linha 1</text>
+  <rect x="84.0" y="100.0" width="300.0" height="9.0" rx="2" fill="#16a34a" stroke="none"/>
+  <text x="76.0" y="108.0" font-size="9" fill="#6b7280" text-anchor="end" font-weight="400">linha 2</text>
+  <rect x="84.0" y="112.0" width="300.0" height="9.0" rx="2" fill="#7c3aed" stroke="none"/>
+  <text x="76.0" y="120.0" font-size="9" fill="#6b7280" text-anchor="end" font-weight="400">linha 3</text>
+  <rect x="84.0" y="124.0" width="300.0" height="9.0" rx="2" fill="#2563eb" stroke="none"/>
+  <text x="76.0" y="132.0" font-size="9" fill="#6b7280" text-anchor="end" font-weight="400">linha 4</text>
+  <rect x="84.0" y="136.0" width="300.0" height="9.0" rx="2" fill="#f59e0b" stroke="none"/>
+  <text x="76.0" y="144.0" font-size="9" fill="#6b7280" text-anchor="end" font-weight="400">linha 5</text>
+  <rect x="84.0" y="148.0" width="300.0" height="9.0" rx="2" fill="#16a34a" stroke="none"/>
+  <text x="76.0" y="156.0" font-size="9" fill="#6b7280" text-anchor="end" font-weight="400">linha 6</text>
+  <rect x="84.0" y="160.0" width="300.0" height="9.0" rx="2" fill="#7c3aed" stroke="none"/>
+  <text x="76.0" y="168.0" font-size="9" fill="#6b7280" text-anchor="end" font-weight="400">linha 7</text>
+  <rect x="84.0" y="172.0" width="300.0" height="9.0" rx="2" fill="#2563eb" stroke="none"/>
+  <text x="76.0" y="180.0" font-size="9" fill="#6b7280" text-anchor="end" font-weight="400">linha 8</text>
+  <rect x="84.0" y="184.0" width="300.0" height="9.0" rx="2" fill="#f59e0b" stroke="none"/>
+  <text x="76.0" y="192.0" font-size="9" fill="#6b7280" text-anchor="end" font-weight="400">linha 9</text>
+  <rect x="84.0" y="196.0" width="300.0" height="9.0" rx="2" fill="#16a34a" stroke="none"/>
+  <text x="76.0" y="204.0" font-size="9" fill="#6b7280" text-anchor="end" font-weight="400">linha 10</text>
+  <rect x="84.0" y="208.0" width="300.0" height="9.0" rx="2" fill="#7c3aed" stroke="none"/>
+  <text x="76.0" y="216.0" font-size="9" fill="#6b7280" text-anchor="end" font-weight="400">linha 11</text>
+  <rect x="84.0" y="220.0" width="300.0" height="9.0" rx="2" fill="#2563eb" stroke="none"/>
+  <text x="76.0" y="228.0" font-size="9" fill="#6b7280" text-anchor="end" font-weight="400">linha 12</text>
+  <rect x="84.0" y="232.0" width="300.0" height="9.0" rx="2" fill="#f59e0b" stroke="none"/>
+  <text x="76.0" y="240.0" font-size="9" fill="#6b7280" text-anchor="end" font-weight="400">linha 13</text>
+  <rect x="84.0" y="244.0" width="300.0" height="9.0" rx="2" fill="#16a34a" stroke="none"/>
+  <text x="76.0" y="252.0" font-size="9" fill="#6b7280" text-anchor="end" font-weight="400">linha 14</text>
+  <rect x="84.0" y="256.0" width="300.0" height="9.0" rx="2" fill="#7c3aed" stroke="none"/>
+  <text x="76.0" y="264.0" font-size="9" fill="#6b7280" text-anchor="end" font-weight="400">linha 15</text>
+  <rect x="420.0" y="84.0" width="16.0" height="16.0" rx="3" fill="#2563eb" stroke="none"/>
+  <text x="444.0" y="97.0" font-size="12" fill="#111827" text-anchor="start" font-weight="400">1º quadro da câmera: linhas 0, 4, 8, …</text>
+  <rect x="420.0" y="112.0" width="16.0" height="16.0" rx="3" fill="#f59e0b" stroke="none"/>
+  <text x="444.0" y="125.0" font-size="12" fill="#111827" text-anchor="start" font-weight="400">2º quadro da câmera: linhas 1, 5, 9, …</text>
+  <rect x="420.0" y="140.0" width="16.0" height="16.0" rx="3" fill="#16a34a" stroke="none"/>
+  <text x="444.0" y="153.0" font-size="12" fill="#111827" text-anchor="start" font-weight="400">3º quadro da câmera: linhas 2, 6, 10, …</text>
+  <rect x="420.0" y="168.0" width="16.0" height="16.0" rx="3" fill="#7c3aed" stroke="none"/>
+  <text x="444.0" y="181.0" font-size="12" fill="#111827" text-anchor="start" font-weight="400">4º quadro da câmera: linhas 3, 7, 11, …</text>
+  <text x="420.0" y="218.0" font-size="12" fill="#6b7280" text-anchor="start" font-weight="400">Sem buffer de quadro: o Mega tem só 8 kB de RAM.</text>
+  <text x="420.0" y="236.0" font-size="12" fill="#6b7280" text-anchor="start" font-weight="400">Menos pacotes por linha = menos quadros da câmera.</text>
+</svg>

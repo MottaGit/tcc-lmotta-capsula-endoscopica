@@ -15,7 +15,7 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
 from . import protocolo as p
-from . import rle
+from . import rice, rle
 
 PACOTES_MAX_POR_LINHA = -(-(p.TAMANHO_CAB_LINHA + p.LARGURA) // p.TAMANHO_PAYLOAD)  # 12
 
@@ -31,6 +31,7 @@ class QuadroRemontado:
     linhas_parciais: int
     linhas_faltantes: int
     linhas_rle: int
+    linhas_rice: int
     pixels_recebidos: int     # pixels que puderam ser reconstruídos
     bytes_dados: int          # bytes de imagem efetivamente transmitidos (após RLE)
     fim_recebido: bool        # o pacote EOF chegou
@@ -40,7 +41,7 @@ class QuadroRemontado:
         return self.pacotes_recebidos / self.pacotes_esperados if self.pacotes_esperados else 0.0
 
     @property
-    def reducao_rle(self) -> float:
+    def reducao(self) -> float:
         """Redução de tamanho em relação aos mesmos pixels sem compressão."""
         return 1 - self.bytes_dados / self.pixels_recebidos if self.pixels_recebidos else 0.0
 
@@ -107,7 +108,7 @@ class Remontador:
         self._ultimo_id = atual.quadro_id
 
         pixels = bytearray(self._anterior) if self.faltantes == "anterior" else bytearray(self.largura * self.altura)
-        completas = parciais = rle_linhas = bytes_dados = pixels_recebidos = 0
+        completas = parciais = rle_linhas = rice_linhas = bytes_dados = pixels_recebidos = 0
         vistas = set()
 
         for seq in sorted(atual.pacotes):
@@ -123,6 +124,9 @@ class Remontador:
             if codificacao == p.COD_RLE:
                 linha, conhecidos, usados = self._decodificar_rle(pedacos)
                 rle_linhas += 1
+            elif codificacao == p.COD_RICE:
+                linha, conhecidos, usados = self._decodificar_rice(pedacos)
+                rice_linhas += 1
             else:
                 linha, conhecidos, usados = self._decodificar_bruto(pedacos)
             bytes_dados += usados
@@ -151,6 +155,7 @@ class Remontador:
             linhas_parciais=parciais,
             linhas_faltantes=self.altura - completas - parciais,
             linhas_rle=rle_linhas,
+            linhas_rice=rice_linhas,
             pixels_recebidos=pixels_recebidos,
             bytes_dados=bytes_dados,
             fim_recebido=atual.seq_fim is not None,
@@ -208,6 +213,18 @@ class Remontador:
         linha[:n] = decodificado[:n]
         for x in range(n):
             conhecidos[x] = True
+        return linha, conhecidos, usados
+
+    def _decodificar_rice(self, pedacos: List[Optional[p.Pacote]]):
+        dados = bytearray()
+        for k, pacote in enumerate(pedacos):
+            if pacote is None:
+                break  # o fluxo de bits só pode ser lido em sequência
+            dados += pacote.payload[p.TAMANHO_CAB_LINHA:] if k == 0 else pacote.payload
+        pixels, usados = rice.decodificar_linha(bytes(dados), self.largura)
+        linha = bytearray(self.largura)
+        linha[:len(pixels)] = pixels
+        conhecidos = [x < len(pixels) for x in range(self.largura)]
         return linha, conhecidos, usados
 
     @staticmethod

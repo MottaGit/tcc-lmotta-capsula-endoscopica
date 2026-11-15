@@ -52,7 +52,7 @@ desse primeiro pacote começa com 2 bytes de cabeçalho de linha:
 | Byte | Conteúdo |
 |---|---|
 | 0 | número da linha (0…239) |
-| 1 | codificação: `0` = bruto, `1` = RLE |
+| 1 | codificação: `0` = bruto, `1` = RLE, `2` = DPCM + Rice |
 
 Assim, uma perda afeta no máximo uma linha, e as linhas podem chegar em
 qualquer ordem. O transmissor envia em ordem entrelaçada (ver abaixo).
@@ -68,6 +68,10 @@ qualquer ordem. O transmissor envia em ordem entrelaçada (ver abaixo).
   e o pior caso (240 × 12 = 2.880 pacotes) cabe nos 12 bits de sequência.
   Depois de uma perda não dá para saber onde os pares seguintes começam,
   então o resto daquela linha fica marcado como faltante.
+* **DPCM + Rice** (opcional, `COMPRESSAO COMP_RICE`): fluxo de bits com 3 bits
+  de `k` + os resíduos em Golomb-Rice ([`docs/compressao.md`](compressao.md)),
+  dividido em bytes como o bruto (26 + 28 + 28 …). Também só é usado quando é
+  o menor, e uma perda interrompe o resto da linha, como no RLE.
 
 ## Enquadramento na serial
 
@@ -75,6 +79,12 @@ O receptor envia cada pacote ao PC como `A5 5A` + 32 bytes, a 1.000.000
 baud. O PC procura o `A5 5A`, valida o CRC-8 e, se ele falhar, recomeça a
 procura um byte adiante. Texto solto na serial (mensagens de inicialização)
 é ignorado.
+
+## Etapa 1: quadros brutos
+
+Na etapa 1 não há pacotes: o Mega envia pela USB o marcador
+`00 FF 00 FF 'Q' 'V' 'G' 'A'` seguido dos 76.800 bytes do quadro, linha a
+linha e em ordem (`python -m capsula.receber --bruto`).
 
 ## Remontagem no PC
 
@@ -87,7 +97,8 @@ procura um byte adiante. Texto solto na serial (mensagens de inicialização)
    linha é decodificada. Linhas e trechos perdidos ficam pretos (padrão,
    útil para depuração) ou repetem o quadro anterior (`--faltantes anterior`).
 4. Estatísticas por imagem: pacotes recebidos/esperados (o `seq` do `EOF`
-   informa o total), linhas completas/parciais/faltantes e redução pelo RLE.
+   informa o total), linhas completas/parciais/faltantes e redução pela
+   compressão. Com `--csv`, tudo vai para uma planilha.
 
 ## Estratégia de captura no transmissor
 
@@ -96,14 +107,15 @@ ACK) é mais lento que a câmera. O firmware então:
 
 1. lê **uma** linha (320 bytes de Y) assim que o HREF sobe, com as
    interrupções desligadas para não perder nenhuma borda do PCLK;
-2. envia essa linha (12 pacotes ou menos, com RLE). Enquanto isso, as
+2. envia essa linha (12 pacotes ou menos, se comprimida). Enquanto isso, as
    interrupções de HREF/VSYNC continuam contando as linhas que passam;
 3. ao terminar, espera a próxima linha **ainda não enviada** e repete.
 
 As linhas puladas são capturadas nos próximos quadros da câmera. Na prática,
 a imagem é montada de forma entrelaçada (0, 4, 8, … depois 1, 5, 9, …) e o
-tempo por imagem fica limitado pelo rádio, não pela câmera. Por isso o RLE
-(menos pacotes por linha) se traduz direto em mais quadros por segundo. Como
+tempo por imagem fica limitado pelo rádio, não pela câmera. Por isso a
+compressão (menos pacotes por linha) se traduz direto em mais quadros por
+segundo. Como
 efeito colateral, objetos em movimento rápido aparecem "penteados", o que é
 aceitável numa validação em bancada com cena estática.
 
@@ -117,3 +129,6 @@ Para conferir uma implementação nova:
 ```
 a0 00 00 97 00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19
 ```
+
+* DPCM + Rice da linha `pixel[i] = i / 3` (inteiro), i = 0…319: `k = 0`,
+  67 bytes, começando por `03 18 c6 31 8c 63 18 c6 31 8c 63 18`.

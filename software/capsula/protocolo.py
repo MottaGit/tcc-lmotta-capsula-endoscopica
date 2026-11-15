@@ -22,7 +22,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Iterator, List, Optional
 
-from . import rle
+from . import rice, rle
 
 # --- Dimensões e formato -----------------------------------------------------
 
@@ -44,13 +44,20 @@ EOL = 0x10  # End Of Line:    último pacote de uma linha
 # --- Codificação da linha -----------------------------------------------------
 
 COD_BRUTO = 0  # 320 bytes de luminância
-COD_RLE = 1    # pares (repetições, valor); escolhido só quando é menor
+COD_RLE = 1    # pares (repetições, valor)
+COD_RICE = 2   # DPCM + Golomb-Rice (ver rice.py)
+# A codificação é escolhida por linha: a menor entre as permitidas pelo modo,
+# e só se for menor que a bruta. Logo uma linha nunca passa de 12 pacotes.
+MODOS = ("bruto", "rle", "rice")  # "rice" = escolhe entre bruto, RLE e Rice
 
 SEQ_MAX = 0x0FFF  # 12 bits
 
 # --- Enquadramento na serial (receptor -> PC) ---------------------------------
 
 SYNC = b"\xA5\x5A"  # cada pacote vai na serial como SYNC + 32 bytes
+
+# Etapa 1 (dados brutos, sem pacotes): marcador + 76.800 bytes por quadro
+MARCADOR_QUADRO_BRUTO = b"\x00\xFF\x00\xFFQVGA"
 
 
 class ErroPacote(ValueError):
@@ -109,6 +116,20 @@ class Pacote:
         return bool(self.flags & flag)
 
 
+def escolher_codificacao(pixels: bytes, modo: str) -> tuple:
+    """``(codificação, bytes)`` da menor representação permitida pelo modo."""
+    melhor = (COD_BRUTO, LARGURA)
+    if modo in ("rle", "rice"):
+        tamanho = rle.tamanho_codificado(pixels)
+        if tamanho < melhor[1]:
+            melhor = (COD_RLE, tamanho)
+    if modo == "rice":
+        tamanho = rice.tamanho_linha(pixels)
+        if tamanho < melhor[1]:
+            melhor = (COD_RICE, tamanho)
+    return melhor
+
+
 class Empacotador:
     """Divide linhas de imagem em pacotes (espelha o firmware do transmissor)."""
 
@@ -119,23 +140,26 @@ class Empacotador:
         self._flags = 0
         self._saida: List[Pacote] = []
 
-    def linha(self, y: int, pixels: bytes, ultima: bool = False, comprimir: bool = True) -> List[Pacote]:
+    def linha(self, y: int, pixels: bytes, ultima: bool = False, modo: str = "rle") -> List[Pacote]:
         """Gera os pacotes de uma linha. ``ultima`` marca EOF no último pacote."""
         if len(pixels) != LARGURA:
             raise ValueError(f"a linha deve ter {LARGURA} pixels")
+        if modo not in MODOS:
+            raise ValueError(f"modo deve ser um de {MODOS}")
         self._saida = []
-        codificado = rle.codificar(pixels) if comprimir else b""
-        usar_rle = comprimir and len(codificado) < LARGURA
+        codificacao, tamanho = escolher_codificacao(pixels, modo)
 
         self._flags = SOL
-        self._payload = bytearray([y, COD_RLE if usar_rle else COD_BRUTO])
-        if usar_rle:
+        self._payload = bytearray([y, codificacao])
+        if codificacao == COD_RLE:
+            codificado = rle.codificar(pixels)
             for i in range(0, len(codificado), 2):
                 if len(self._payload) > TAMANHO_PAYLOAD - 2:  # pares nunca são divididos
                     self._enviar()
                 self._payload += codificado[i:i + 2]
         else:
-            for valor in pixels:
+            dados = rice.codificar_linha(pixels) if codificacao == COD_RICE else pixels
+            for valor in dados:
                 if len(self._payload) == TAMANHO_PAYLOAD:
                     self._enviar()
                 self._payload.append(valor)
@@ -194,6 +218,34 @@ class LeitorSerial:
             del self._buf[:fim]
             self.pacotes_validos += 1
             yield pacote
+
+
+class LeitorQuadrosBrutos:
+    """Etapa 1: recupera quadros brutos (marcador + 76.800 bytes) de um fluxo serial."""
+
+    def __init__(self, largura: int = LARGURA, altura: int = ALTURA) -> None:
+        self._buf = bytearray()
+        self._tamanho = largura * altura
+        self.bytes_descartados = 0
+
+    def alimentar(self, dados: bytes) -> Iterator[bytes]:
+        self._buf += dados
+        marcador = MARCADOR_QUADRO_BRUTO
+        while True:
+            inicio = self._buf.find(marcador)
+            if inicio < 0:
+                manter = min(len(self._buf), len(marcador) - 1)
+                self.bytes_descartados += len(self._buf) - manter
+                del self._buf[: len(self._buf) - manter]
+                return
+            self.bytes_descartados += inicio
+            del self._buf[:inicio]
+            fim = len(marcador) + self._tamanho
+            if len(self._buf) < fim:
+                return
+            quadro = bytes(self._buf[len(marcador):fim])
+            del self._buf[:fim]
+            yield quadro
 
 
 def enquadrar(pacote: Pacote) -> bytes:
